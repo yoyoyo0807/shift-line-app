@@ -55,11 +55,18 @@ async def line_webhook(
 ):
     body = await request.body()
 
+    print("WEBHOOK HIT")
+    print("x_line_signature:", x_line_signature)
+    print("raw body:", body.decode("utf-8"))
+
     if not verify_signature(body, x_line_signature):
+        print("Invalid signature")
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     payload = json.loads(body.decode("utf-8"))
     events = payload.get("events", [])
+
+    print("events count:", len(events))
 
     for event in events:
         event_type = event.get("type")
@@ -67,6 +74,16 @@ async def line_webhook(
         source_type = source.get("type")
         source_group_id = source.get("groupId")
         source_user_id = source.get("userId")
+
+        print(
+            "event received:",
+            {
+                "event_type": event_type,
+                "source_type": source_type,
+                "source_group_id": source_group_id,
+                "source_user_id": source_user_id,
+            },
+        )
 
         save_webhook_event(
             event_type=event_type or "",
