@@ -48,6 +48,20 @@ def fetch_group_summary(group_id: str):
         return None
 
 
+def sync_group_if_needed(group_id: str | None):
+    if not group_id:
+        return
+
+    save_group(group_id)
+
+    summary = fetch_group_summary(group_id)
+    if summary and summary.get("groupName"):
+        update_group_name(
+            line_group_id=group_id,
+            group_name=summary["groupName"],
+        )
+
+
 @router.post("/webhook/line")
 async def line_webhook(
     request: Request,
@@ -93,16 +107,11 @@ async def line_webhook(
             raw_json=json.dumps(event, ensure_ascii=False),
         )
 
-        if source_group_id:
-            save_group(source_group_id)
+        # join / message を含め、groupId が取れるイベントでは常にグループ情報を自動同期
+        if source_group_id and event_type in {"join", "message", "memberJoined", "memberLeft"}:
+            sync_group_if_needed(source_group_id)
 
-            summary = fetch_group_summary(source_group_id)
-            if summary and summary.get("groupName"):
-                update_group_name(
-                    line_group_id=source_group_id,
-                    group_name=summary["groupName"],
-                )
-
+        # 発言者を group_members に反映
         if source_group_id and source_user_id:
             upsert_group_member(
                 line_group_id=source_group_id,
@@ -111,6 +120,7 @@ async def line_webhook(
                 active=True,
             )
 
+        # メンバー参加イベント
         if event_type == "memberJoined" and source_group_id:
             joined = event.get("joined", {}).get("members", [])
             for member in joined:
@@ -123,6 +133,7 @@ async def line_webhook(
                         active=True,
                     )
 
+        # メンバー退出イベント
         if event_type == "memberLeft" and source_group_id:
             left = event.get("left", {}).get("members", [])
             for member in left:
