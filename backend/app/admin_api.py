@@ -17,6 +17,7 @@ from app.db import (
     save_shift_targets,
     update_group_name,
     upsert_group_member_with_name,
+    create_group_if_not_exists,
 )
 from app.line_api import (
     get_group_member_ids,
@@ -49,6 +50,10 @@ class RequirementsSaveRequest(BaseModel):
 class BotRunRequest(BaseModel):
     job_type: str
     target_month: str
+
+class BootstrapGroupRequest(BaseModel):
+    line_group_id: str
+    group_name: str | None = None
 
 
 def require_group(group_token: str):
@@ -218,6 +223,25 @@ def build_shortage_message(group_name: str, month: str, daily_status: list[dict]
         *shortage_lines,
     ])
 
+
+@router.post("/bootstrap-group")
+def bootstrap_group(payload: BootstrapGroupRequest):
+    row = create_group_if_not_exists(
+        line_group_id=payload.line_group_id,
+        group_name=payload.group_name,
+    )
+
+    return {
+        "ok": True,
+        "group": {
+            "id": row["id"],
+            "line_group_id": row["line_group_id"],
+            "group_name": row["group_name"],
+            "group_token": row["group_token"],
+            "created_at": row["created_at"],
+            "updated_at": row["updated_at"],
+        },
+    }
 
 @router.get("/groups")
 def list_groups():

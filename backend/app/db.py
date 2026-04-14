@@ -784,3 +784,61 @@ def save_bot_log(group_id: int, job_type: str, message_text: str):
     )
     conn.commit()
     conn.close()
+
+def create_group_if_not_exists(line_group_id: str, group_name: str | None = None):
+    conn = get_conn()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT id, line_group_id, group_name, group_token, created_at, updated_at FROM groups WHERE line_group_id = ?",
+        (line_group_id,),
+    )
+    row = cur.fetchone()
+
+    if row:
+        if group_name:
+            cur.execute(
+                """
+                UPDATE groups
+                SET group_name = ?, updated_at = ?
+                WHERE line_group_id = ?
+                """,
+                (group_name, now_iso(), line_group_id),
+            )
+            conn.commit()
+            cur.execute(
+                "SELECT id, line_group_id, group_name, group_token, created_at, updated_at FROM groups WHERE line_group_id = ?",
+                (line_group_id,),
+            )
+            row = cur.fetchone()
+
+        conn.close()
+        return row
+
+    group_token = secrets.token_urlsafe(16)
+
+    cur.execute(
+        """
+        INSERT INTO groups (
+            line_group_id, group_name, group_token, created_at, updated_at
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            line_group_id,
+            group_name,
+            group_token,
+            now_iso(),
+            now_iso(),
+        ),
+    )
+    conn.commit()
+
+    cur.execute(
+        "SELECT id, line_group_id, group_name, group_token, created_at, updated_at FROM groups WHERE line_group_id = ?",
+        (line_group_id,),
+    )
+    row = cur.fetchone()
+
+    conn.close()
+    return row
