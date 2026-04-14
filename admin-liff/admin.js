@@ -1,5 +1,5 @@
 const ADMIN_LIFF_ID = "2009772212-JhnIEnYt";
-const API_BASE = "https://pharmacodynamic-surfy-sharleen.ngrok-free.dev";
+const API_BASE = "";
 
 let currentUserId = null;
 let currentDisplayName = null;
