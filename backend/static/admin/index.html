@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>シフト管理</title>
+  <link rel="stylesheet" href="./admin.css" />
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>シフト管理</h1>
+
+    <div class="card">
+      <div id="status" class="status-box status-normal">初期化中...</div>
+      <div id="profile" class="muted"></div>
+      <div id="groupInfo" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <label for="groupSelect">対象グループ</label>
+      <select id="groupSelect"></select>
+    </div>
+
+    <div class="card">
+      <label for="monthInput">対象月</label>
+      <input id="monthInput" type="month" />
+    </div>
+
+    <div class="tabs card">
+      <button class="tab-button active" data-tab="home">管理ホーム</button>
+      <button class="tab-button" data-tab="targets">対象者設定</button>
+      <button class="tab-button" data-tab="requirements">営業条件設定</button>
+      <button class="tab-button" data-tab="status">提出状況確認</button>
+      <button class="tab-button" data-tab="bot">bot実行</button>
+    </div>
+
+    <div id="tab-home" class="tab-panel active card">
+      <h2>管理ホーム</h2>
+      <div id="homeSummary" class="summary-grid"></div>
+    </div>
+
+    <div id="tab-targets" class="tab-panel card">
+  <h2>対象者設定</h2>
+  <div class="toolbar">
+    <button id="syncMembersButton" class="sub-button" type="button">メンバー同期</button>
+    <button id="selectAllTargets" class="sub-button" type="button">全員選択</button>
+    <button id="clearAllTargets" class="sub-button danger" type="button">全解除</button>
+  </div>
+  <div id="targetsList" class="check-list"></div>
+  <button id="saveTargetsButton" type="button">対象者を保存</button>
+</div>
+
+    <div id="tab-requirements" class="tab-panel card">
+      <h2>営業条件設定</h2>
+      <div id="requirementsTableWrapper" class="table-wrapper"></div>
+      <button id="saveRequirementsButton" type="button">営業条件を保存</button>
+    </div>
+
+    <div id="tab-status" class="tab-panel card">
+      <h2>提出状況確認</h2>
+      <div id="statusSummary" class="summary-grid"></div>
+      <div class="split">
+        <div>
+          <h3>未提出</h3>
+          <div id="missingMembers" class="simple-list"></div>
+        </div>
+        <div>
+          <h3>提出済み</h3>
+          <div id="submittedMembers" class="simple-list"></div>
+        </div>
+      </div>
+      <div id="dailyStatusTableWrapper" class="table-wrapper"></div>
+    </div>
+
+    <div id="tab-bot" class="tab-panel card">
+      <h2>bot実行</h2>
+      <div class="button-grid">
+        <button id="runRecruitButton" type="button">募集メッセージ送信</button>
+        <button id="runMissingButton" type="button">未提出通知送信</button>
+        <button id="runSummaryButton" type="button">提出状況送信</button>
+        <button id="runShortageButton" type="button">不足日通知送信</button>
+      </div>
+      <div id="botResult" class="muted"></div>
+    </div>
+  </div>
+
+  <script src="./admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>シフト提出</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>シフト提出</h1>
+
+    <div class="card">
+      <div id="status">初期化中...</div>
+      <div id="profile" class="muted"></div>
+      <div id="groupInfo" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <label for="monthInput">対象月</label>
+      <input id="monthInput" type="month" />
+    </div>
+
+    <div class="card">
+      <h2>自分の入力</h2>
+
+      <div class="section">
+        <h3>LUNCH</h3>
+        <div id="lunchDays" class="day-grid"></div>
+      </div>
+
+      <div class="section">
+        <h3>DINNER</h3>
+        <div id="dinnerDays" class="day-grid"></div>
+      </div>
+
+      <div class="section">
+        <label for="noteInput">備考</label>
+        <textarea id="noteInput" rows="4" placeholder="備考を入力"></textarea>
+      </div>
+
+      <button id="saveButton">保存</button>
+    </div>
+
+    <div class="card">
+      <h2>全体表</h2>
+      <div id="board"></div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

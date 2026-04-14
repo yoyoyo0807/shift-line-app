@@ -1,0 +1,8 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET", "")
+LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", "")
+LIFF_URL = os.getenv("LIFF_URL", "")
